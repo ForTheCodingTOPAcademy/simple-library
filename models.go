@@ -43,21 +43,37 @@ func (r *Reader) String() string {
 	return fmt.Sprintf("-----------------------------------\n%d: %s. Активен: %v\n-----------------------------------", r.ID, r.Name, r.IsActive)
 }
 
-/*В разработке
-func (b *Book) IssueBook(r Reader) {
+func (b *Book) IssueBook(r Reader) error {
 	if b.IsIssued {
-		fmt.Printf("Книга %s by %s %s уже кому-то выдана читателю \n", b.Title, b.Author.Name, b.Author.Surname)
-		return
+		return fmt.Errorf("Книга %s by %s %s уже кому-то выдана читателю \n", b.Title, b.Author.Name, b.Author.Surname)
 	}
-	if !r.IsActive {
-		fmt.Printf("Читатель %s неактивен и не может получить книгу\n", r.Name)
-		return
-	}
+	//Тут какая-то проблема
+	/*if !r.IsActive {
+		return fmt.Errorf("Читатель %s неактивен и не может получить книгу\n", r.Name)
+	}*/
 	b.ReaderID = r.ID
 	b.IsIssued = true
 	fmt.Printf("Книга %s выдана %s\n", b.Title, r.Name)
+	return nil
 }
 
+func (l *Library) IssueBookToReader(BookID int, ReaderID int) error {
+	var book *Book
+	var reader *Reader
+	var err error
+	if book, err = l.GetBookById(BookID); err != nil {
+		return fmt.Errorf("Некорректный ID книги!")
+	}
+	if reader, err = l.GetReaderById(ReaderID); err != nil {
+		return fmt.Errorf("Некорректный ID читателя!")
+	}
+	if eror := book.IssueBook(*reader); eror != nil {
+		return eror
+	}
+	return nil
+}
+
+/*В разработке
 func (b *Book) ReturnBook() {
 	if !b.IsIssued {
 		fmt.Printf("Книга %s и так уже в библиотеке.\n", b.Title)
@@ -90,49 +106,45 @@ func (l *Library) GetAllBooks() {
 }
 
 // Поиск книги по ID
-func (l *Library) GetBookById(BookId int) *Book {
+func (l *Library) GetBookById(BookId int) (*Book, error) {
 	for _, book := range l.Books {
 		if BookId == book.ID {
 			fmt.Println("Книга найдена: \n", book.String())
-			return &book
+			return &book, nil
 		}
 	}
-	fmt.Printf("\n\nКнига не найдена! Просмотрите список всех книг и найдите нужный Вам ID: GetAllBooks()\n\n")
-	return nil
+	return nil, fmt.Errorf("\n\nКнига не найдена! Просмотрите список всех книг и найдите нужный Вам ID: GetAllBooks()\n\n")
 }
 
 // Поиск книги по названию
-func (l *Library) GetBookByTitle(BookTitle string) *Book {
+func (l *Library) GetBookByTitle(BookTitle string) (*Book, error) {
 	for _, book := range l.Books {
 		if book.Title == BookTitle {
 			fmt.Println("Книга найдена: \n", book.String())
-			return &book
+			return &book, nil
 		}
 	}
-	fmt.Printf("\n\nКнига не найдена! Просмотрите список всех книг и найдите нужное Вам название: GetAllBooks()\n\n")
-	return nil
+	return nil, fmt.Errorf("\n\nКнига не найдена! Просмотрите список всех книг и найдите нужное Вам название: GetAllBooks()\n\n")
 }
 
 // Поиск читателя по ID
-func (l *Library) GetReaderById(ReaderID int) *Reader {
+func (l *Library) GetReaderById(ReaderID int) (*Reader, error) {
 	for _, reader := range l.Readers {
 		if reader.ID == ReaderID {
 			fmt.Println("Читатель найден: \n", reader.String())
-			return &reader
+			return &reader, nil
 		}
 	}
-	fmt.Printf("\n\nЧитатель не найден! Просмотрите список всех читателей и найдите нужный Вам ID: GetAllReaders()\n\n")
-	return nil
+	return nil, fmt.Errorf("\n\nЧитатель не найден! Просмотрите список всех читателей и найдите нужный Вам ID: GetAllReaders()\n\n")
 }
 
 // Поиск читателя по имени
-func (l *Library) GetReaderByName(ReaderName string) *Reader {
+func (l *Library) GetReaderByName(ReaderName string) (*Reader, error) {
 	for _, reader := range l.Readers {
 		if reader.Name == ReaderName {
 			fmt.Println("Читатель найден: \n", reader.String())
-			return &reader
+			return &reader, nil
 		}
 	}
-	fmt.Printf("\n\nЧитатель не найден! Просмотрите список всех читателей и найдите нужное Вам Имя: GetAllReaders()\n\n")
-	return nil
+	return nil, fmt.Errorf("\n\nЧитатель не найден! Просмотрите список всех читателей и найдите нужное Вам Имя: GetAllReaders()\n\n")
 }

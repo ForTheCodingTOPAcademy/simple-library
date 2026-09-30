@@ -32,18 +32,30 @@ func main() {
 	library.AddBook("Капитанская дочка", "Александр", "Пушкин")
 	library.GetAllBooks()
 
-	existing_book_by_ID := library.GetBookById(2)
-	non_existring_book_by_ID := library.GetBookById(10)
-	existing_book_by_Title := library.GetBookByTitle("2:36 по Аляске")
-	non_existring_book_by_Title := library.GetBookByTitle("Война и мир")
+	existing_book_by_ID, err := library.GetBookById(1)
+	non_existring_book_by_ID, err := library.GetBookById(10)
+	existing_book_by_Title, err := library.GetBookByTitle("2:36 по Аляске")
+	non_existring_book_by_Title, err := library.GetBookByTitle("Война и мир")
 
-	existing_reader_by_ID := library.GetReaderById(2)
-	non_existring_reader_by_ID := library.GetReaderById(10)
-	existing_reader_by_Name := library.GetReaderByName("Виктория")
-	non_existring_reader_by_Name := library.GetReaderByName("Сергей")
+	existing_reader_by_ID, err := library.GetReaderById(1)
+	non_existring_reader_by_ID, err := library.GetReaderById(10)
+	existing_reader_by_Name, err := library.GetReaderByName("Виктория")
+	non_existring_reader_by_Name, err := library.GetReaderByName("Сергей")
+
+	existing_reader_by_ID.IsActive = true
+
+	fmt.Println("\n\n\nВыдача книги\n\n\n")
+
+	if eror := library.IssueBookToReader(1, 1); eror != nil {
+
+	} else {
+		fmt.Println(eror)
+	}
+
+	fmt.Println(existing_reader_by_ID.IsActive)
 
 	//Пока возвращаемые ID не используется, поэтому я задействовал их тут, чтобы программа не выдавала ошибку о неиспользованных переменных
-	fmt.Sprintln(existing_book_by_ID, existing_book_by_Title, existing_reader_by_ID, existing_reader_by_Name, non_existring_book_by_ID, non_existring_book_by_Title, non_existring_reader_by_ID, non_existring_reader_by_Name)
+	fmt.Sprintln(err, existing_book_by_ID, existing_book_by_Title, existing_reader_by_ID, existing_reader_by_Name, non_existring_book_by_ID, non_existring_book_by_Title, non_existring_reader_by_ID, non_existring_reader_by_Name)
 
 	/*!!!Все методы расположены в models.go!!!*/
 
