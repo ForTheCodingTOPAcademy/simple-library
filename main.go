@@ -2,31 +2,34 @@ package main
 
 import (
 	"fmt"
+	"library-project/domain"
+	"library-project/library"
+	//"library-project/notifications"
 )
 
 func main() {
 	//Заполнение библиотеки без функций
 
-	readers := []Reader{
-		Reader{ID: 1, Name: "Мигель", IsActive: false},
-		Reader{ID: 2, Name: "Александр", IsActive: false},
-		Reader{ID: 3, Name: "Анатолий", IsActive: false},
-		Reader{ID: 4, Name: "Милана", IsActive: false},
-		Reader{ID: 5, Name: "Игорь", IsActive: false},
-		Reader{ID: 6, Name: "Алана", IsActive: false},
-		Reader{ID: 7, Name: "Виктория", IsActive: false},
+	readers := []domain.Reader{
+		domain.Reader{ID: 1, Name: "Мигель", IsActive: false},
+		domain.Reader{ID: 2, Name: "Александр", IsActive: false},
+		domain.Reader{ID: 3, Name: "Анатолий", IsActive: false},
+		domain.Reader{ID: 4, Name: "Милана", IsActive: false},
+		domain.Reader{ID: 5, Name: "Игорь", IsActive: false},
+		domain.Reader{ID: 6, Name: "Алана", IsActive: false},
+		domain.Reader{ID: 7, Name: "Виктория", IsActive: false},
 	}
-	books := []Book{
-		Book{ID: 1, Title: "Вокруг света за 80 дней", Author: Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
-		Book{ID: 2, Title: "Таинственный остров", Author: Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
-		Book{ID: 3, Title: "Остров сокровищ", Author: Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
-		Book{ID: 4, Title: "2:36 по Аляске", Author: Author{Name: "Анастасия", Surname: "Гор"}, IsIssued: false},
-		Book{ID: 5, Title: "Менталитет Мамбы", Author: Author{Name: "Коби", Surname: "Брайнт"}, IsIssued: false},
+	books := []domain.Book{
+		domain.Book{ID: 1, Title: "Вокруг света за 80 дней", Author: domain.Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
+		domain.Book{ID: 2, Title: "Таинственный остров", Author: domain.Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
+		domain.Book{ID: 3, Title: "Остров сокровищ", Author: domain.Author{Name: "Жуль", Surname: "Верн"}, IsIssued: false},
+		domain.Book{ID: 4, Title: "2:36 по Аляске", Author: domain.Author{Name: "Анастасия", Surname: "Гор"}, IsIssued: false},
+		domain.Book{ID: 5, Title: "Менталитет Мамбы", Author: domain.Author{Name: "Коби", Surname: "Брайнт"}, IsIssued: false},
 	}
 
-	library := Library{Readers: readers, Books: books}
-	library.lastAddedBookID = 5
-	library.lastAddedReaderID = 7
+	library := library.CreateLibrary(books, readers)
+	fmt.Println("Книг в библиотеке: ", library.GetLastAddedBookID()+1)
+	fmt.Println("Читателей в библиотеке: ", library.GetLastAddedReaderID()+1)
 
 	//Заполнение библиотеки с функциями
 	library.GetAllBooks()
@@ -76,9 +79,9 @@ func main() {
 
 	/*!!!Все методы и классы библиотеки расположены в models.go!!!*/
 
-	var emailN Notifier = EmailNotifier{EmailAdress: "example@gmail.com"}
+	/*var emailN NoNotifier = EmailNotifier{EmailAdress: "example@gmail.com"}
 	var SMSN Notifier = SMSNotifier{PhoneNumber: "+7 988 376 88 30"}
 
 	SMSN.Notify("Hello through SMS")
-	emailN.Notify("Hello through email")
+	emailN.Notify("Hello through email")*/
 }
