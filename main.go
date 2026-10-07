@@ -1,13 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"library-project/domain"
 	"library-project/library"
+	"log"
 	//"library-project/notifications"
 )
 
 func main() {
+	//Работа с флагами комндной строки
+
+	saveFlag := flag.Bool("save", false, "saving books flag")
+	loadFlag := flag.Bool("load", false, "loading books flag")
+
+	flag.Parse()
+
 	//Заполнение библиотеки без функций
 
 	readers := []domain.Reader{
@@ -28,8 +37,15 @@ func main() {
 	}
 
 	library := library.CreateLibrary(books, readers)
+	//library := library.CreateLibrary([]domain.Book{}, []domain.Reader{})
 	fmt.Println("Книг в библиотеке: ", library.GetLastAddedBookID()+1)
 	fmt.Println("Читателей в библиотеке: ", library.GetLastAddedReaderID()+1)
+
+	if *loadFlag {
+		if err := library.Load("books.csv"); err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	//Заполнение библиотеки с функциями
 	library.GetAllBooks()
@@ -84,4 +100,10 @@ func main() {
 
 	SMSN.Notify("Hello through SMS")
 	emailN.Notify("Hello through email")*/
+
+	if *saveFlag {
+		if err := library.Load("books.csv"); err != nil {
+			log.Fatal(err)
+		}
+	}
 }

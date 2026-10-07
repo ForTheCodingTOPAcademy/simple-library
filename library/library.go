@@ -1,8 +1,11 @@
 package library
 
 import (
+	"encoding/csv"
 	"fmt"
 	"library-project/domain"
+	"os"
+	"strconv"
 )
 
 type Library struct {
@@ -154,5 +157,84 @@ func (l *Library) ReturnBook(BookID int) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// 5.Методы работы с файлами
+
+func (l *Library) Save(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+
+	writer.Write([]string{"id", "title", "authorName", "authorSurname", "isIssued", "readerID"})
+
+	for _, book := range l.Books {
+		id := strconv.Itoa(book.ID)
+		isIssued := strconv.FormatBool(book.IsIssued)
+		readerID := strconv.Itoa(book.ReaderID)
+		writer.Write([]string{id, book.Title, book.Author.Name, book.Author.Surname, isIssued, readerID})
+	}
+
+	writer.Flush()
+
+	if err := writer.Error(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *Library) Load(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+
+	reader.Read()
+
+	records, err := reader.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	for _, record := range records {
+
+		id, err := strconv.Atoi(record[0])
+		if err != nil {
+			return err
+		}
+
+		isIssued, err := strconv.ParseBool(record[4])
+		if err != nil {
+			return err
+		}
+
+		readerID, err := strconv.Atoi(record[5])
+		if err != nil {
+			return err
+		}
+
+		l.Books = append(l.Books, domain.Book{
+			ID:    id,
+			Title: record[1],
+			Author: domain.Author{
+				Name:    record[2],
+				Surname: record[3],
+			},
+			IsIssued: isIssued,
+			ReaderID: readerID,
+		})
+	}
+
 	return nil
 }
