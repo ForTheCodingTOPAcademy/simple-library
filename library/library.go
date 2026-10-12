@@ -29,6 +29,26 @@ func CreateLibrary(books []domain.Book, readers []domain.Reader) *Library {
 	return &library
 }
 
+//Обновление LastID У загруженной библиотеки
+
+func (lib *Library) UpdateLastIDs() {
+	maxBookID := 0
+	maxReaderID := 0
+	
+	for _, book := range lib.Books {
+		if book.ID > maxBookID {
+			maxBookID = book.ID
+		}
+	}
+
+	for _, reader := range lib.Readers {
+		if reader.ID > maxReaderID {
+			maxReaderID = reader.ID
+		}
+	}
+	
+}
+
 //Методы самой библиотеки
 
 //1. Методы вывода
