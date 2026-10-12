@@ -45,7 +45,7 @@ func LoadLibraryFromJSON(filePath string) (*library.Library, error){
 	}
 
 	lib := library.CreateLibrary(data.books, data.readers)
-	lib.UpdateLastID()
+	lib.UpdateLastIDs()
 
 	return lib, nil
 }
