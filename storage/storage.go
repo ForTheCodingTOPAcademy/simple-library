@@ -14,19 +14,24 @@ type Storable interface {
 
 //Вспомагательная структура для хранения
 type storageData struct{
-	books []*domain.Book `json:"books"`//Обозначение ключа для json
-	readers []*domain.Reader `json:"readers"`//Обозначение ключа для json
+	Books []domain.Book `json:"books"`//Обозначение ключа для json
+	Readers []domain.Reader `json:"readers"`//Обозначение ключа для json
 }
 
 //Метод сохранения библиотеки в JSON
 func SaveLibraryToJSON(filePath string, lib *library.Library) error {
-	Data := storageData{books: lib.Books, readers: lib.Readers,}
+	Data := storageData{
+		Books: lib.Books, 
+		Readers: lib.Readers,
+	}
 	
-	DataJSON, err := json.MarshalIndent(data, "", " ")
+	DataJSON, err := json.MarshalIndent(Data, "", " ")
 
 	if err != nil {
 		return err
 	}
+
+
 	return os.WriteFile(filePath, DataJSON, 0644)
 }
 
@@ -44,7 +49,7 @@ func LoadLibraryFromJSON(filePath string) (*library.Library, error){
 		return nil, err
 	}
 
-	lib := library.CreateLibrary(data.books, data.readers)
+	lib := library.CreateLibrary(data.Books, data.Readers)
 	lib.UpdateLastIDs()
 
 	return lib, nil
