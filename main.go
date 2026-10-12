@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"library-project/domain"
 	"library-project/library"
+	"library-project/storage"
 	"log"
 	//"library-project/notifications"
 )
@@ -35,57 +36,65 @@ func main() {
 		domain.Book{ID: 4, Title: "2:36 по Аляске", Author: domain.Author{Name: "Анастасия", Surname: "Гор"}, IsIssued: false},
 		domain.Book{ID: 5, Title: "Менталитет Мамбы", Author: domain.Author{Name: "Коби", Surname: "Брайнт"}, IsIssued: false},
 	}
-
-	library := library.CreateLibrary(books, readers)
+	fmt.Sprint(books,readers)
 	//library := library.CreateLibrary([]domain.Book{}, []domain.Reader{})
-	fmt.Println("Книг в библиотеке: ", library.GetLastAddedBookID()+1)
-	fmt.Println("Читателей в библиотеке: ", library.GetLastAddedReaderID()+1)
 
-	if *loadFlag {
-		if err := library.Load("books.csv"); err != nil {
-			log.Fatal(err)
+	lib := library.CreateLibrary([]domain.Book{}, []domain.Reader{})
+	var errr error
+
+	if *loadFlag{
+		lib, errr = storage.LoadLibraryFromJSON("books.json")
+		if errr != nil {
+			log.Fatal(errr)
 		}
+	}else{
+		lib = library.CreateLibrary(books, readers)
 	}
 
+
+
+	fmt.Println("Книг в библиотеке: ", lib.GetLastAddedBookID()+1)
+	fmt.Println("Читателей в библиотеке: ", lib.GetLastAddedReaderID()+1)
+
 	//Заполнение библиотеки с функциями
-	library.GetAllBooks()
-	_, er := library.AddBook("Капитанская дочка", "Александр", "Пушкин")
+	lib.GetAllBooks()
+	_, er := lib.AddBook("Капитанская дочка", "Александр", "Пушкин")
 	if er != nil {
 		fmt.Println(er)
 	}
-	library.GetAllBooks()
+	lib.GetAllBooks()
 
 	//Проверка работы функций по поиску книг и читателей
 
-	existing_book_by_ID, err := library.GetBookById(1)
-	non_existring_book_by_ID, err := library.GetBookById(10)
-	existing_book_by_Title, err := library.GetBookByTitle("2:36 по Аляске")
-	non_existring_book_by_Title, err := library.GetBookByTitle("Война и мир")
+	existing_book_by_ID, err := lib.GetBookById(1)
+	non_existring_book_by_ID, err := lib.GetBookById(10)
+	existing_book_by_Title, err := lib.GetBookByTitle("2:36 по Аляске")
+	non_existring_book_by_Title, err := lib.GetBookByTitle("Война и мир")
 
-	existing_reader_by_ID, err := library.GetReaderById(1)
-	non_existring_reader_by_ID, err := library.GetReaderById(10)
-	existing_reader_by_Name, err := library.GetReaderByName("Виктория")
-	non_existring_reader_by_Name, err := library.GetReaderByName("Сергей")
+	existing_reader_by_ID, err := lib.GetReaderById(1)
+	non_existring_reader_by_ID, err := lib.GetReaderById(10)
+	existing_reader_by_Name, err := lib.GetReaderByName("Виктория")
+	non_existring_reader_by_Name, err := lib.GetReaderByName("Сергей")
 
 	//Проверка работы функций по выдаче книг читателю
 
-	if eror := library.IssueBookToReader(1, 1); eror != nil {
+	if eror := lib.IssueBookToReader(1, 1); eror != nil {
 		fmt.Println(eror)
 	}
 
 	existing_reader_by_ID.IsActive = true
 
-	if eror := library.IssueBookToReader(1, 1); eror != nil {
+	if eror := lib.IssueBookToReader(1, 1); eror != nil {
 		fmt.Println(eror)
 	}
 
 	//Проверка работы функций по возврате книг в библиотеку
 
-	e := library.ReturnBook(existing_book_by_Title.ID)
+	e := lib.ReturnBook(existing_book_by_Title.ID)
 	if e != nil {
 		fmt.Println(e)
 	}
-	e = library.ReturnBook(existing_book_by_ID.ID)
+	e = lib.ReturnBook(existing_book_by_ID.ID)
 	if e != nil {
 		fmt.Println(e)
 	}
@@ -101,8 +110,9 @@ func main() {
 	SMSN.Notify("Hello through SMS")
 	emailN.Notify("Hello through email")*/
 
+	
 	if *saveFlag {
-		if err := library.Load("books.csv"); err != nil {
+		if err := storage.SaveLibraryToJSON("books.json", lib); err != nil {
 			log.Fatal(err)
 		}
 	}
